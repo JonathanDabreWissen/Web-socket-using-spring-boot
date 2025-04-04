@@ -27,7 +27,7 @@
                     <input id="senderInput" type="text" class="form-control px-5 py-2 rounded-lg border border-[#8696a0]" placeholder="Your name..."/>
                 </div>
             </div>
-            <div id="chat" class=" flex-1 rounded p-3 mb-3" style="overflow-y: auto;">
+            <div id="chat" class="flex-1 rounded p-3 mb-3" style="overflow-y: auto;">
 
             </div>
             <div class="input-group mb-3 px-20 flex w-full space-x-4">
@@ -43,6 +43,8 @@
         </div>
     </body>
     <script>
+        let currentUser = '';
+
         function setConnected(connected){
             document.getElementById('sendMessage').disabled = !connected;
         }
@@ -56,16 +58,31 @@
                     showMessage(JSON.parse(message.body));
                 });
             });
+
+            // Store the current user name when it changes
+            document.getElementById('senderInput').addEventListener('change', function() {
+                currentUser = this.value;
+            });
         }
 
         function showMessage(message){
-            
             var chat = document.getElementById('chat');
             var messageItem = document.createElement('div');
-            messageItem.className = "mb-1 bg-[#202c33] w-fit text-wrap max-w-[400px] px-3 py-2 rounded-lg flex flex-col";
+            
+            // Check if the message is from the current user
+            const isCurrentUser = message.sender === currentUser;
+            
+            // Set message container class based on sender
+            if (isCurrentUser) {
+                // Current user's message - align right
+                messageItem.className = "mb-1 bg-[#005c4b] w-fit text-wrap max-w-[400px] px-3 py-2 rounded-lg flex flex-col ml-auto";
+            } else {
+                // Other user's message - align left
+                messageItem.className = "mb-1 bg-[#202c33] w-fit text-wrap max-w-[400px] px-3 py-2 rounded-lg flex flex-col";
+            }
 
             var messageSender = document.createElement('div');
-            messageSender.style.color = '#52bbe8';
+            messageSender.style.color = isCurrentUser ? '#8de0bb' : '#52bbe8';
             messageSender.style.fontSize = '0.75rem'; 
             messageSender.textContent = message.sender;
             messageItem.appendChild(messageSender);
@@ -77,12 +94,15 @@
 
             chat.appendChild(messageItem);
             chat.scrollTop = chat.scrollHeight;
-            
         }
 
         function sendMessage(){
             var sender = document.getElementById('senderInput').value;
+            currentUser = sender; // Update current user when sending message
             var content = document.getElementById('messageInput').value;
+            
+            if (!sender || !content) return; // Don't send empty messages
+            
             var chatMessage = {
                 sender: sender,
                 content: content
@@ -92,7 +112,14 @@
         }
 
         document.getElementById('sendMessage').onclick = sendMessage;
+        
+        // Add event listener for Enter key in message input
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
         window.onload = connect;
-
     </script>
 </html>
