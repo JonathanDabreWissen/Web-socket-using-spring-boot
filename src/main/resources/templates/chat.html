@@ -9,8 +9,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.1/stomp.min.js"></script>
     </head>
     <body class="bg-[#111b21] text-white">
-        <div class="container ">
-            <div class="px-20 py-5 bg-[#202c33] flex justify-between">
+        <div class="container h-screen flex flex-col ">
+            <div class="px-20 py-5 bg-[#202c33] flex justify-between sticky top-0">
                 <div class="flex space-x-5">
                     <div class="pt-1">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-8">
@@ -27,13 +27,17 @@
                     <input id="senderInput" type="text" class="form-control px-5 py-2 rounded-lg border border-[#8696a0]" placeholder="Your name..."/>
                 </div>
             </div>
-            <div id="chat" clas="border rounded p-3 mb-3" style="height: 300px; overflow-y: auto;">
+            <div id="chat" class=" flex-1 rounded p-3 mb-3" style="overflow-y: auto;">
 
             </div>
-            <div class="input-group mb-3">
-                <input id="messageInput" type="text" class="form-control " placeholder="Your message..."/>
+            <div class="input-group mb-3 px-20 flex w-full space-x-4">
+                <input id="messageInput" type="text" class="form-control w-full px-5 py-3 text-sm bg-[#2a3942] rounded-lg outline-none " placeholder="Your message..."/>
                 <div id="input-group-append">
-                    <button id="sendMessage" class="btn btn-primary">Send</button>
+                    <button id="sendMessage" class="btn btn-primary text-[#7c8c95] pt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-8">
+                            <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
+                        </svg>                          
+                    </button>
                 </div>
             </div>
         </div>
@@ -55,12 +59,25 @@
         }
 
         function showMessage(message){
+            
             var chat = document.getElementById('chat');
-            var messageElement = document.createElement('div');
-            messageElement.textContent = message.sender + ': ' + message.content;
-            messageElement.class = "border-bottom mb-1";
-            chat.appendChild(messageElement);
+            var messageItem = document.createElement('div');
+            messageItem.className = "mb-1 bg-[#202c33] w-fit text-wrap max-w-[400px] px-3 py-2 rounded-lg flex flex-col";
+
+            var messageSender = document.createElement('div');
+            messageSender.style.color = '#52bbe8';
+            messageSender.style.fontSize = '0.75rem'; 
+            messageSender.textContent = message.sender;
+            messageItem.appendChild(messageSender);
+
+            var messageContent = document.createElement('div')
+            messageContent.style.color = "#e9edef"
+            messageContent.textContent = message.content;
+            messageItem.appendChild(messageContent);
+
+            chat.appendChild(messageItem);
             chat.scrollTop = chat.scrollHeight;
+            
         }
 
         function sendMessage(){
